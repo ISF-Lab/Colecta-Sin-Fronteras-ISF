@@ -1,0 +1,31 @@
+name = "colecta-isf-worker"
+main = "src/index.js"
+compatibility_date = "2024-11-03"
+
+# Variables públicas (no sensibles)
+[vars]
+FRONTEND_URL = "http://localhost:4321"  # Cambiar en producción
+WORKER_URL = "http://localhost:8787"    # Cambiar en producción
+
+# ============================================================================
+# SECRETS (configurar con: wrangler secret put NOMBRE)
+# ============================================================================
+# 
+# Para configurar los secrets en desarrollo:
+#   1. Crear archivo .dev.vars (ver .dev.vars.example)
+#   2. Copiar los valores de cada secret
+# 
+# Para configurar los secrets en producción:
+#   wrangler secret put SUPABASE_URL
+#   wrangler secret put SUPABASE_SERVICE_KEY
+#   wrangler secret put PAYKU_PUBLIC_KEY
+#   wrangler secret put PAYKU_PRIVATE_KEY
+#   wrangler secret put TURNSTILE_SECRET
+# 
+# Lista de secrets necesarios:
+# - SUPABASE_URL: URL de tu proyecto Supabase
+# - SUPABASE_SERVICE_KEY: Service role key (NO la anon key)
+# - PAYKU_PUBLIC_KEY: Public key de Payku
+# - PAYKU_PRIVATE_KEY: Private key de Payku
+# - TURNSTILE_SECRET: Secret key de Cloudflare Turnstile
+# ============================================================================

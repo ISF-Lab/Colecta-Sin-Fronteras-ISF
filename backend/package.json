@@ -1,0 +1,22 @@
+{
+  "name": "colecta-isf-backend",
+  "version": "1.0.0",
+  "description": "Backend API para Colecta ISF - Cloudflare Worker",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "tail": "wrangler tail"
+  },
+  "keywords": [
+    "cloudflare",
+    "worker",
+    "donations",
+    "payku"
+  ],
+  "author": "ISF Chile",
+  "license": "MIT",
+  "devDependencies": {
+    "wrangler": "^3.78.0"
+  }
+}

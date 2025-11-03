@@ -1,0 +1,165 @@
+---
+import Layout from '../components/Layout.astro';
+import ProgressBar from '../components/ProgressBar';
+import DonationForm from '../components/DonationForm';
+import TeamRanking from '../components/TeamRanking';
+
+// Obtener el parámetro team de la URL
+const teamParam = Astro.url.searchParams.get('team');
+const teamSlug = teamParam || 'general';
+---
+
+<Layout 
+  title="Colecta ISF 2025 - Dona por Chile"
+  description="Únete a nuestra colecta solidaria. Cada aporte cuenta para transformar vidas y alcanzar nuestra meta."
+>
+  <div class="container mx-auto px-4 py-8 md:py-12">
+    
+    <!-- Hero Section -->
+    <section class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+        Colecta Solidaria 
+        <span class="text-isf-blue">ISF 2025</span>
+      </h1>
+      <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+        Tu aporte puede transformar vidas. Únete a nuestra campaña 
+        y ayúdanos a alcanzar nuestra meta juntos.
+      </p>
+    </section>
+
+    <!-- Progress Bar Section -->
+    <section class="mb-12">
+      <ProgressBar client:load />
+    </section>
+
+    <!-- Main Content Grid -->
+    <div class="grid lg:grid-cols-2 gap-8 mb-12">
+      
+      <!-- Donation Form -->
+      <section>
+        <DonationForm client:load teamSlug={teamSlug} />
+      </section>
+
+      <!-- Team Ranking -->
+      <section>
+        <TeamRanking client:load currentTeam={teamSlug} />
+      </section>
+
+    </div>
+
+    <!-- Info Section -->
+    <section class="bg-blue-50 rounded-lg p-8 mb-8">
+      <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">
+        ¿Cómo funciona?
+      </h2>
+      <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-isf-blue rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="text-white text-2xl font-bold">1</span>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Completa el formulario</h3>
+          <p class="text-sm text-gray-600">
+            Ingresa tus datos y el monto que deseas donar
+          </p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-isf-blue rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="text-white text-2xl font-bold">2</span>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">Paga de forma segura</h3>
+          <p class="text-sm text-gray-600">
+            Serás redirigido a Payku para completar el pago
+          </p>
+        </div>
+        
+        <div class="text-center">
+          <div class="w-16 h-16 bg-isf-blue rounded-full flex items-center justify-center mx-auto mb-3">
+            <span class="text-white text-2xl font-bold">3</span>
+          </div>
+          <h3 class="font-semibold text-gray-900 mb-2">¡Listo!</h3>
+          <p class="text-sm text-gray-600">
+            Tu donación suma al progreso de la colecta
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="max-w-3xl mx-auto">
+      <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+        Preguntas Frecuentes
+      </h2>
+      <div class="space-y-4">
+        <details class="bg-white rounded-lg shadow-sm p-4">
+          <summary class="font-semibold text-gray-900 cursor-pointer">
+            ¿Es seguro donar en esta plataforma?
+          </summary>
+          <p class="mt-2 text-gray-600 text-sm">
+            Sí, totalmente seguro. Utilizamos Payku, una plataforma de pagos certificada 
+            que cumple con todos los estándares de seguridad internacionales.
+          </p>
+        </details>
+
+        <details class="bg-white rounded-lg shadow-sm p-4">
+          <summary class="font-semibold text-gray-900 cursor-pointer">
+            ¿Puedo donar cualquier monto?
+          </summary>
+          <p class="mt-2 text-gray-600 text-sm">
+            Los montos válidos están entre $1.000 y $500.000 CLP. 
+            Cualquier monto dentro de ese rango es bienvenido.
+          </p>
+        </details>
+
+        <details class="bg-white rounded-lg shadow-sm p-4">
+          <summary class="font-semibold text-gray-900 cursor-pointer">
+            ¿Recibiré un comprobante de mi donación?
+          </summary>
+          <p class="mt-2 text-gray-600 text-sm">
+            Sí, recibirás un correo de confirmación con los detalles de tu donación 
+            una vez que el pago sea procesado exitosamente.
+          </p>
+        </details>
+
+        <details class="bg-white rounded-lg shadow-sm p-4">
+          <summary class="font-semibold text-gray-900 cursor-pointer">
+            ¿Qué son los equipos en el ranking?
+          </summary>
+          <p class="mt-2 text-gray-600 text-sm">
+            Los equipos representan diferentes grupos que participan en la colecta. 
+            Puedes donar para tu equipo usando el link especial que te compartieron, 
+            o donar al equipo general.
+          </p>
+        </details>
+      </div>
+    </section>
+
+  </div>
+</Layout>
+
+<style>
+  /* Estilos para los details/summary */
+  details summary {
+    list-style: none;
+  }
+  
+  details summary::-webkit-details-marker {
+    display: none;
+  }
+  
+  details summary::after {
+    content: '+';
+    float: right;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #0066CC;
+  }
+  
+  details[open] summary::after {
+    content: '−';
+  }
+  
+  details[open] summary {
+    margin-bottom: 0.5rem;
+  }
+</style>

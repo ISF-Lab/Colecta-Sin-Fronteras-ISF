@@ -1,0 +1,37 @@
+# ============================================================================
+# VARIABLES DE ENTORNO - DESARROLLO LOCAL
+# ============================================================================
+# 
+# INSTRUCCIONES:
+# 1. Copiar este archivo a: .dev.vars (gitignored)
+# 2. Reemplazar los valores con tus credenciales reales
+# 3. Nunca commitear el archivo .dev.vars
+# 
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# SUPABASE
+# Dónde obtenerlas: Dashboard → Settings → API
+# ----------------------------------------------------------------------------
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+# ----------------------------------------------------------------------------
+# PAYKU
+# Dónde obtenerlas: Dashboard de Payku → Configuración → API Keys
+# Documentación: https://docs.payku.cl
+# ----------------------------------------------------------------------------
+PAYKU_PUBLIC_KEY=pk_test_...
+PAYKU_PRIVATE_KEY=sk_test_...
+
+# ----------------------------------------------------------------------------
+# CLOUDFLARE TURNSTILE
+# Dónde obtenerla: Dashboard de Cloudflare → Turnstile → Tu sitio → Settings
+# ----------------------------------------------------------------------------
+TURNSTILE_SECRET=0x4AAA...
+
+# ----------------------------------------------------------------------------
+# URLs DEL PROYECTO (para CORS y redirects)
+# ----------------------------------------------------------------------------
+FRONTEND_URL=http://localhost:4321
+WORKER_URL=http://localhost:8787
