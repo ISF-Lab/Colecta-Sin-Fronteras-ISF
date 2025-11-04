@@ -5,8 +5,8 @@ compatibility_date = "2024-11-03"
 # Variables públicas (diferentes por ambiente)
 [vars]
 ENVIRONMENT = "production"  # ← Esto desactiva el bypass
-FRONTEND_URL = "https://colecta.isf.cl"
-WORKER_URL = "https://api.colecta.isf.cl"
+FRONTEND_URL = "https://colecta.isf-chile.org"
+WORKER_URL = "https://colecta-isf-worker.francisco-ruiz.workers.dev"
 
 # Para desarrollo local, usa .dev.vars:
 # ENVIRONMENT = "development"

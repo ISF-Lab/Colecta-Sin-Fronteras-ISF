@@ -118,7 +118,7 @@ En Cloudflare Pages Dashboard > Settings > Environment variables:
 
 | Variable | Valor |
 |----------|-------|
-| `PUBLIC_BACKEND_URL` | `https://api.colecta.isf.cl` |
+| `PUBLIC_BACKEND_URL` | `https://colecta-isf-worker.francisco-ruiz.workers.dev` |
 | `PUBLIC_SUPABASE_URL` | Tu URL de Supabase |
 | `PUBLIC_SUPABASE_ANON_KEY` | Tu anon key de Supabase |
 | `PUBLIC_TURNSTILE_SITE_KEY` | Tu site key de Turnstile |
