@@ -48,17 +48,21 @@ if (!turnstileToken) {
 }
 
 // --- INICIO: Bypass para desarrollo local ---
-// Permitimos el token 'test-token' para poder usar herramientas como cURL
-// sin necesidad de un frontend real. Esto no afecta la seguridad en producción.
-const isDevelopmentBypass = turnstileToken === 'test-token';
+// IMPORTANTE: Este bypass SOLO funciona en desarrollo local
+// En producción, env.ENVIRONMENT será 'production' y esto nunca se ejecutará
+const isDevelopment = env.ENVIRONMENT === 'development' || env.ENVIRONMENT === 'local';
+const isDevelopmentBypass = isDevelopment && turnstileToken === 'test-token';
 
-if (!isDevelopmentBypass) {
-  // Solo ejecutamos la validación real si el token NO es el de prueba
+if (isDevelopmentBypass) {
+  console.log('[DONATE] ⚠️ Usando bypass de Turnstile (solo desarrollo)');
+} else {
+  // Validación real de Turnstile
   const turnstileValid = await validateTurnstile(turnstileToken, env.TURNSTILE_SECRET);
   if (!turnstileValid) {
     console.warn('[DONATE] Turnstile inválido');
     return jsonError('TURNSTILE_INVALID', 'Verificación anti-bot fallida', 400);
   }
+  console.log('[DONATE] ✅ Turnstile válido');
 }
 
     // ========================================================================

@@ -2,11 +2,16 @@ name = "colecta-isf-worker"
 main = "src/index.js"
 compatibility_date = "2024-11-03"
 
-# Variables públicas (no sensibles)
+# Variables públicas (diferentes por ambiente)
 [vars]
-FRONTEND_URL = "http://localhost:4321"  # Cambiar en producción
-WORKER_URL = "http://localhost:8787"    # Cambiar en producción
+ENVIRONMENT = "production"  # ← Esto desactiva el bypass
+FRONTEND_URL = "https://colecta.isf.cl"
+WORKER_URL = "https://api.colecta.isf.cl"
 
+# Para desarrollo local, usa .dev.vars:
+# ENVIRONMENT = "development"
+# Para desarrollo local, usa .dev.vars:
+# ENVIRONMENT = "development"
 # ============================================================================
 # SECRETS (configurar con: wrangler secret put NOMBRE)
 # ============================================================================
