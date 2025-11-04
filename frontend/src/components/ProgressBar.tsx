@@ -13,7 +13,7 @@ export default function ProgressBar() {
     meta: 25000,
     total_donaciones: 0
   });
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   // Obtener variables de entorno
@@ -100,7 +100,7 @@ export default function ProgressBar() {
         <div className="overflow-hidden h-6 text-xs flex rounded-full bg-gray-200">
           <div
             style={{ width: `${percentage}%` }}
-            className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-isf-blue to-blue-600 transition-all duration-1000 ease-out"
+            className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-isf-celeste to-isf-azul transition-all duration-1000 ease-out"
           >
             {percentage > 15 && (
               <span className="font-semibold">{percentage}%</span>
@@ -118,7 +118,7 @@ export default function ProgressBar() {
       <div className="flex items-baseline justify-between">
         <div>
           <p className="text-sm text-gray-600">Recaudado</p>
-          <p className="text-2xl font-bold text-isf-blue">
+          <p className="text-2xl font-bold text-isf-celeste">
             {formatCurrency(stats.total_recaudado)}
           </p>
         </div>

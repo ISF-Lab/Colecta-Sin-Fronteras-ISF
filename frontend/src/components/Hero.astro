@@ -1,0 +1,110 @@
+---
+interface Props {
+  title?: string;
+  subtitle?: string;
+  backgroundImage?: string;
+  ctaText?: string;
+  ctaTarget?: string;
+}
+
+const {
+  title = "COLECTA ISF 2025",
+  subtitle = "Apoya proyectos de impacto social que transforman comunidades en contexto de vulnerabilidad",
+  backgroundImage = "/hero-background.jpg",
+  ctaText = "Quiero Donar Ahora",
+  ctaTarget = "#formulario-donacion"
+} = Astro.props;
+---
+
+<section class="relative min-h-[500px] md:min-h-[600px] flex items-center justify-center overflow-hidden">
+  <!-- Background Image con overlay -->
+  <div class="absolute inset-0 z-0">
+    <div class="absolute inset-0 bg-gradient-to-b from-black/60 via-black/50 to-black/70 z-10"></div>
+    <img 
+      src={backgroundImage}
+      alt="Fondo de la colecta"
+      class="w-full h-full object-cover"
+    />
+  </div>
+
+  <!-- Content -->
+  <div class="relative z-20 container mx-auto px-4 text-center">
+    <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 drop-shadow-lg">
+      {title}
+    </h1>
+    <p class="text-lg md:text-xl lg:text-2xl text-white/95 max-w-3xl mx-auto leading-relaxed drop-shadow-md mb-8">
+      {subtitle}
+    </p>
+    
+    <!-- CTA Button -->
+    <a 
+      href={ctaTarget}
+      class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-isf-naranja to-orange-600 hover:from-orange-600 hover:to-isf-naranja text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 space-x-2 group"
+    >
+      <span>{ctaText}</span>
+      <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Decorative bottom wave -->
+  <div class="absolute bottom-0 left-0 right-0 z-20">
+    <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+      <path 
+        d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,120L1360,120C1280,120,1120,120,960,120C800,120,640,120,480,120C320,120,160,120,80,120L0,120Z" 
+        fill="rgb(239 246 255 / 0.3)"
+      />
+    </svg>
+  </div>
+</section>
+
+<style>
+  /* Animación suave para el hero */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  h1 {
+    animation: fadeInUp 0.8s ease-out;
+  }
+
+  p {
+    animation: fadeInUp 0.8s ease-out;
+    animation-delay: 0.2s;
+  }
+
+  a {
+    animation: fadeInUp 0.8s ease-out;
+    animation-delay: 0.4s;
+  }
+</style>
+
+<script>
+  // Smooth scroll al hacer click en el CTA
+  document.addEventListener('DOMContentLoaded', () => {
+    const ctaButton = document.querySelector<HTMLAnchorElement>('a[href^="#"]');
+    if (ctaButton) {
+      ctaButton.addEventListener('click', (e: Event) => {
+        e.preventDefault();
+        const targetId = ctaButton.getAttribute('href');
+        if (targetId) {
+          const targetElement = document.querySelector(targetId);
+          if (targetElement) {
+            targetElement.scrollIntoView({ 
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        }
+      });
+    }
+  });
+</script>

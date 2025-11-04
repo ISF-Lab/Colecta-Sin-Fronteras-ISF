@@ -1,0 +1,136 @@
+---
+// URLs de los formularios (ajustar según necesidad)
+const mobilizadorFormUrl = "https://docs.google.com/forms/d/e/1FAIpQLSdpGOzAEcxFcxhkA_2gqkMZMPy48MUU2hYW0ftBe_e9nEmRzw/viewform";
+const voluntarioFormUrl = "https://isf-chile.org/sumate-al-movimiento/";
+---
+
+<section class="py-16 md:py-20 bg-gradient-to-br from-isf-azul to-isf-celeste">
+  <div class="container mx-auto px-4">
+    
+    <!-- Header -->
+    <div class="text-center mb-12">
+      <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+        Sé parte del cambio
+      </h2>
+      <p class="text-lg text-white/90 max-w-3xl mx-auto">
+        No solo puedes donar, también puedes ser parte activa de esta campaña. 
+        Únete como voluntario o trabajar en terreno, o como movilizador para ayudarnos 
+        a recaudar más fondos con tu propio equipo.
+      </p>
+    </div>
+
+    <!-- Grid de opciones -->
+    <div class="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+      
+      <!-- Opción 1: Voluntario -->
+      <div class="bg-white rounded-xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+        <div class="flex items-start mb-4">
+          <div class="w-12 h-12 bg-isf-celeste rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+            <span class="text-2xl">🙋</span>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+              Voluntario
+            </h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Participa en proyectos de impacto social en comunidades vulnerables. 
+              Aporta tu tiempo, habilidades y pasión por ayudar a otros.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          <div class="flex items-start text-sm text-gray-700">
+            <svg class="w-5 h-5 text-isf-verde mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Trabajo en terreno con comunidades</span>
+          </div>
+          <div class="flex items-start text-sm text-gray-700">
+            <svg class="w-5 h-5 text-isf-verde mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Capacitación y acompañamiento constante</span>
+          </div>
+          <div class="flex items-start text-sm text-gray-700">
+            <svg class="w-5 h-5 text-isf-verde mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Experiencia transformadora y networking</span>
+          </div>
+        </div>
+
+        <a
+          href={voluntarioFormUrl}
+          class="mt-8 w-full bg-isf-celeste hover:bg-isf-azul text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2 group"
+        >
+          <span>Quiero ser voluntario</span>
+          <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Opción 2: Movilizador -->
+      <div class="bg-white rounded-xl p-8 shadow-xl hover:shadow-2xl transition-shadow duration-300">
+        <div class="flex items-start mb-4">
+          <div class="w-12 h-12 bg-isf-rosa rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+            <span class="text-2xl">📣</span>
+          </div>
+          <div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">
+              Movilizador
+            </h3>
+            <p class="text-gray-600 text-sm leading-relaxed">
+              Crea o únete a un equipo y compite por recaudar más fondos. 
+              Moviliza a tu red y ayúdanos a alcanzar la meta.
+            </p>
+          </div>
+        </div>
+
+        <div class="mt-6 space-y-3">
+          <div class="flex items-start text-sm text-gray-700">
+            <svg class="w-5 h-5 text-isf-verde mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Crea tu equipo o únete a uno existente</span>
+          </div>
+          <div class="flex items-start text-sm text-gray-700">
+            <svg class="w-5 h-5 text-isf-verde mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Compite en el ranking y gana reconocimiento</span>
+          </div>
+          <div class="flex items-start text-sm text-gray-700">
+            <svg class="w-5 h-5 text-isf-verde mr-2 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+            </svg>
+            <span>Acceso a materiales de difusión y apoyo</span>
+          </div>
+        </div>
+
+        <a
+          href={mobilizadorFormUrl}
+          class="mt-8 w-full bg-isf-rosa hover:bg-pink-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center space-x-2 group"
+        >
+          <span>Quiero ser movilizador</span>
+          <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Bottom CTA -->
+    <div class="mt-12 text-center">
+      <p class="text-white/90 text-sm">
+        ¿Tienes dudas? Escríbenos a 
+        <a href="mailto:contacto@isf.cl" class="font-semibold underline hover:text-white">
+          contacto@isf.cl
+        </a>
+      </p>
+    </div>
+
+  </div>
+</section>

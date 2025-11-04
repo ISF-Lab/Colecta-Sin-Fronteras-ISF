@@ -1,8 +1,13 @@
 ---
 import Layout from '../components/Layout.astro';
+import Hero from '../components/Hero.astro';
 import ProgressBar from '../components/ProgressBar';
+import WhyDonate from '../components/WhyDonate.astro';
 import DonationForm from '../components/DonationForm';
 import TeamRanking from '../components/TeamRanking';
+import MembershipCTA from '../components/MembershipCTA.astro';
+import AboutUs from '../components/AboutUs.astro';
+import BePartOfChange from '../components/BePartOfChange.astro';
 
 // Obtener el parámetro team de la URL
 const teamParam = Astro.url.searchParams.get('team');
@@ -11,155 +16,172 @@ const teamSlug = teamParam || 'general';
 
 <Layout 
   title="Colecta ISF 2025 - Dona por Chile"
-  description="Únete a nuestra colecta solidaria. Cada aporte cuenta para transformar vidas y alcanzar nuestra meta."
+  description="Apoya proyectos de impacto social que transforman comunidades en contexto de vulnerabilidad"
 >
-  <div class="container mx-auto px-4 py-8 md:py-12">
-    
-    <!-- Hero Section -->
-    <section class="text-center mb-12">
-      <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-        Colecta Solidaria 
-        <span class="text-isf-blue">ISF 2025</span>
-      </h1>
-      <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
-        Tu aporte puede transformar vidas. Únete a nuestra campaña 
-        y ayúdanos a alcanzar nuestra meta juntos.
-      </p>
-    </section>
+  
+  <!-- 1. Hero Section con CTA -->
+  <Hero 
+    title="COLECTA ISF 2025"
+    subtitle="Apoya proyectos de impacto social que transforman comunidades en contexto de vulnerabilidad"
+    backgroundImage="/hero-background.jpg"
+    ctaText="Quiero Donar Ahora"
+    ctaTarget="#formulario-donacion"
+  />
 
-    <!-- Progress Bar Section -->
-    <section class="mb-12">
+  <!-- 2. Barra de Progreso -->
+  <section class="py-8 md:py-12">
+    <div class="container mx-auto px-4">
       <ProgressBar client:load />
-    </section>
-
-    <!-- Main Content Grid -->
-    <div class="grid lg:grid-cols-2 gap-8 mb-12">
-      
-      <!-- Donation Form -->
-      <section>
-        <DonationForm client:load teamSlug={teamSlug} />
-      </section>
-
-      <!-- Team Ranking -->
-      <section>
-        <TeamRanking client:load currentTeam={teamSlug} />
-      </section>
-
     </div>
+  </section>
 
-    <!-- Info Section -->
-    <section class="bg-blue-50 rounded-lg p-8 mb-8">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4 text-center">
-        ¿Cómo funciona?
-      </h2>
-      <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-        <div class="text-center">
-          <div class="w-16 h-16 bg-isf-blue rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-white text-2xl font-bold">1</span>
-          </div>
-          <h3 class="font-semibold text-gray-900 mb-2">Completa el formulario</h3>
-          <p class="text-sm text-gray-600">
-            Ingresa tus datos y el monto que deseas donar
-          </p>
-        </div>
+  <!-- 3. ¿Por qué Donar? -->
+  <WhyDonate />
+
+  <!-- 4. Formulario de Donación + Ranking (2 columnas) -->
+  <section id="formulario-donacion" class="bg-gray-50 py-12 md:py-16 scroll-mt-20">
+    <div class="container mx-auto px-4">
+      <div class="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
         
-        <div class="text-center">
-          <div class="w-16 h-16 bg-isf-blue rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-white text-2xl font-bold">2</span>
-          </div>
-          <h3 class="font-semibold text-gray-900 mb-2">Paga de forma segura</h3>
-          <p class="text-sm text-gray-600">
-            Serás redirigido a Payku para completar el pago
-          </p>
+        <!-- Formulario de Donación -->
+        <div>
+          <DonationForm client:load teamSlug={teamSlug} />
         </div>
-        
-        <div class="text-center">
-          <div class="w-16 h-16 bg-isf-blue rounded-full flex items-center justify-center mx-auto mb-3">
-            <span class="text-white text-2xl font-bold">3</span>
-          </div>
-          <h3 class="font-semibold text-gray-900 mb-2">¡Listo!</h3>
-          <p class="text-sm text-gray-600">
-            Tu donación suma al progreso de la colecta
-          </p>
+
+        <!-- Columna derecha: Ranking + CTA Membership -->
+        <div class="space-y-6">
+          <!-- Ranking de Equipos -->
+          <TeamRanking client:load currentTeam={teamSlug} limit={5} />
+          
+          <!-- CTA de Suscripción Mensual -->
+          <MembershipCTA 
+            title="¿Aportar de forma continua?"
+            description="Sé socio de ISF Chile con una suscripción mensual y apoya proyectos de impacto social de manera permanente."
+            linkUrl="https://forms.gle/ejemplo-link-socios"
+            linkText="Más información"
+          />
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Sobre Nosotros (Video + Logros + Testimonios) -->
+  <AboutUs />
+
+  <!-- 6. Sé parte del cambio -->
+  <BePartOfChange />
+
+  <!-- 7. FAQ Section -->
+  <section class="py-12 md:py-16 bg-white">
+    <div class="container mx-auto px-4">
+      <div class="max-w-3xl mx-auto">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-8 text-center">
+          Preguntas Frecuentes
+        </h2>
+        <div class="space-y-4">
+          
+          <details class="bg-gray-50 rounded-lg shadow-sm p-5 border border-gray-200 group">
+            <summary class="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+              <span>¿Es seguro donar en esta plataforma?</span>
+              <svg class="w-5 h-5 text-isf-celeste transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-gray-600 text-sm leading-relaxed">
+              Sí, totalmente seguro. Utilizamos Payku, una plataforma de pagos certificada 
+              que cumple con todos los estándares de seguridad internacionales. Tus datos 
+              están protegidos y encriptados.
+            </p>
+          </details>
+
+          <details class="bg-gray-50 rounded-lg shadow-sm p-5 border border-gray-200 group">
+            <summary class="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+              <span>¿Puedo donar cualquier monto?</span>
+              <svg class="w-5 h-5 text-isf-celeste transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-gray-600 text-sm leading-relaxed">
+              Los montos válidos están entre $1.000 y $500.000 CLP. 
+              Cualquier monto dentro de ese rango es bienvenido y hace la diferencia.
+            </p>
+          </details>
+
+          <details class="bg-gray-50 rounded-lg shadow-sm p-5 border border-gray-200 group">
+            <summary class="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+              <span>¿Recibiré un comprobante de mi donación?</span>
+              <svg class="w-5 h-5 text-isf-celeste transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-gray-600 text-sm leading-relaxed">
+              Sí, recibirás un correo de confirmación con los detalles de tu donación 
+              una vez que el pago sea procesado exitosamente por Payku.
+            </p>
+          </details>
+
+          <details class="bg-gray-50 rounded-lg shadow-sm p-5 border border-gray-200 group">
+            <summary class="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+              <span>¿Qué son los equipos en el ranking?</span>
+              <svg class="w-5 h-5 text-isf-celeste transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-gray-600 text-sm leading-relaxed">
+              Los equipos representan diferentes grupos que participan en la colecta. 
+              Puedes donar para tu equipo usando el link especial que te compartieron, 
+              o donar al equipo general. Es una forma de hacer la colecta más participativa.
+            </p>
+          </details>
+
+          <details class="bg-gray-50 rounded-lg shadow-sm p-5 border border-gray-200 group">
+            <summary class="font-semibold text-gray-900 cursor-pointer list-none flex items-center justify-between">
+              <span>¿Cómo puedo seguir el progreso de la colecta?</span>
+              <svg class="w-5 h-5 text-isf-celeste transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="mt-3 text-gray-600 text-sm leading-relaxed">
+              La barra de progreso en la parte superior de esta página se actualiza 
+              automáticamente cada 10 segundos. Puedes ver en tiempo real cuánto 
+              se ha recaudado y qué equipos van liderando.
+            </p>
+          </details>
+
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- FAQ Section -->
-    <section class="max-w-3xl mx-auto">
-      <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">
-        Preguntas Frecuentes
-      </h2>
-      <div class="space-y-4">
-        <details class="bg-white rounded-lg shadow-sm p-4">
-          <summary class="font-semibold text-gray-900 cursor-pointer">
-            ¿Es seguro donar en esta plataforma?
-          </summary>
-          <p class="mt-2 text-gray-600 text-sm">
-            Sí, totalmente seguro. Utilizamos Payku, una plataforma de pagos certificada 
-            que cumple con todos los estándares de seguridad internacionales.
-          </p>
-        </details>
-
-        <details class="bg-white rounded-lg shadow-sm p-4">
-          <summary class="font-semibold text-gray-900 cursor-pointer">
-            ¿Puedo donar cualquier monto?
-          </summary>
-          <p class="mt-2 text-gray-600 text-sm">
-            Los montos válidos están entre $1.000 y $500.000 CLP. 
-            Cualquier monto dentro de ese rango es bienvenido.
-          </p>
-        </details>
-
-        <details class="bg-white rounded-lg shadow-sm p-4">
-          <summary class="font-semibold text-gray-900 cursor-pointer">
-            ¿Recibiré un comprobante de mi donación?
-          </summary>
-          <p class="mt-2 text-gray-600 text-sm">
-            Sí, recibirás un correo de confirmación con los detalles de tu donación 
-            una vez que el pago sea procesado exitosamente.
-          </p>
-        </details>
-
-        <details class="bg-white rounded-lg shadow-sm p-4">
-          <summary class="font-semibold text-gray-900 cursor-pointer">
-            ¿Qué son los equipos en el ranking?
-          </summary>
-          <p class="mt-2 text-gray-600 text-sm">
-            Los equipos representan diferentes grupos que participan en la colecta. 
-            Puedes donar para tu equipo usando el link especial que te compartieron, 
-            o donar al equipo general.
-          </p>
-        </details>
-      </div>
-    </section>
-
-  </div>
 </Layout>
 
 <style>
-  /* Estilos para los details/summary */
-  details summary {
-    list-style: none;
+  /* Estilos para los details/summary con animación mejorada */
+  details {
+    transition: all 0.3s ease;
   }
-  
-  details summary::-webkit-details-marker {
-    display: none;
+
+  details[open] {
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
-  
-  details summary::after {
-    content: '+';
-    float: right;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #0066CC;
+
+  summary {
+    transition: color 0.2s ease;
   }
-  
-  details[open] summary::after {
-    content: '−';
+
+  summary:hover {
+    color: #5AC2CC;
   }
-  
+
   details[open] summary {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  /* Scroll offset para el anchor #formulario-donacion */
+  .scroll-mt-20 {
+    scroll-margin-top: 5rem;
   }
 </style>

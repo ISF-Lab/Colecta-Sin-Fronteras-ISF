@@ -1,0 +1,46 @@
+---
+interface Props {
+  title?: string;
+  description?: string;
+  linkUrl?: string;
+  linkText?: string;
+}
+
+const {
+  title = "¿Aportar de forma continua?",
+  description = "Sé socio de ISF Chile con una suscripción mensual y apoya proyectos de impacto social de manera permanente.",
+  linkUrl = "https://legacy.payku.cl/suscripcion/index?idplan=5931&verif=950c6d7c", // Cambiar por el link real
+  linkText = "Más información"
+} = Astro.props;
+---
+
+<div class="bg-gradient-to-br from-isf-celeste/10 to-isf-azul/5 rounded-lg border border-isf-celeste/20 p-6">
+  <div class="flex items-start space-x-3">
+    <div class="flex-shrink-0">
+      <div class="w-12 h-12 bg-gradient-to-br from-isf-celeste to-isf-azul rounded-full flex items-center justify-center shadow-md">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+        </svg>
+      </div>
+    </div>
+    <div class="flex-1">
+      <h3 class="text-base font-bold text-gray-900 mb-2">
+        {title}
+      </h3>
+      <p class="text-sm text-gray-600 mb-4 leading-relaxed">
+        {description}
+      </p>
+      <a
+        href={linkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center justify-center px-4 py-2 bg-gradient-to-r from-isf-celeste to-isf-azul hover:from-isf-azul hover:to-isf-celeste text-white text-sm font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg space-x-2 group"
+      >
+        <span>{linkText}</span>
+        <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+        </svg>
+      </a>
+    </div>
+  </div>
+</div>
