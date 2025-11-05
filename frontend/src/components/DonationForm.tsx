@@ -193,12 +193,12 @@ export default function DonationForm({ teamSlug = 'general' }: DonationFormProps
             ))}
           </div>
           
-          {/* Monto personalizado */}
+          {/* Monto personalizado - ⚠️ TEXTO VISIBLE */}
           <div className="relative">
             <label htmlFor="custom-amount" className="block text-xs text-gray-600 mb-1 font-medium">
               Otro monto (CLP)
             </label>
-            <span className="absolute left-4 top-8 text-gray-500">$</span>
+            <span className="absolute left-4 top-8 text-gray-500 pointer-events-none">$</span>
             <input
               type="number"
               id="custom-amount"
@@ -208,13 +208,16 @@ export default function DonationForm({ teamSlug = 'general' }: DonationFormProps
               max={500000}
               step={1000}
               disabled={state === 'loading'}
-              className="w-full pl-8 pr-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+              className="w-full pl-8 pr-4 py-2.5 border-2 border-gray-300 rounded-lg 
+                text-gray-900 placeholder:text-gray-400
+                focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste 
+                disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
               placeholder="15000"
             />
           </div>
         </div>
 
-        {/* Nombre */}
+        {/* Nombre - ⚠️ TEXTO VISIBLE */}
         <div>
           <label htmlFor="nombre" className="block text-sm font-semibold text-gray-900 mb-1">
             Nombre *
@@ -227,12 +230,15 @@ export default function DonationForm({ teamSlug = 'general' }: DonationFormProps
             minLength={2}
             maxLength={100}
             disabled={state === 'loading'}
-            className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg 
+              text-gray-900 placeholder:text-gray-400
+              focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste 
+              disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
             placeholder="Juan Pérez"
           />
         </div>
 
-        {/* Email */}
+        {/* Email - ⚠️ TEXTO VISIBLE */}
         <div>
           <label htmlFor="email" className="block text-sm font-semibold text-gray-900 mb-1">
             Email *
@@ -243,12 +249,15 @@ export default function DonationForm({ teamSlug = 'general' }: DonationFormProps
             name="email"
             required
             disabled={state === 'loading'}
-            className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
+            className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg 
+              text-gray-900 placeholder:text-gray-400
+              focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste 
+              disabled:bg-gray-100 disabled:cursor-not-allowed transition-colors"
             placeholder="juan@ejemplo.com"
           />
         </div>
 
-        {/* Mensaje opcional */}
+        {/* Mensaje opcional - ⚠️ TEXTO VISIBLE */}
         <div>
           <label htmlFor="mensaje" className="block text-sm font-semibold text-gray-900 mb-1">
             Mensaje de apoyo (opcional)
@@ -259,7 +268,10 @@ export default function DonationForm({ teamSlug = 'general' }: DonationFormProps
             rows={3}
             maxLength={500}
             disabled={state === 'loading'}
-            className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste disabled:bg-gray-100 disabled:cursor-not-allowed resize-none transition-colors"
+            className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg 
+              text-gray-900 placeholder:text-gray-400
+              focus:ring-2 focus:ring-isf-celeste focus:border-isf-celeste 
+              disabled:bg-gray-100 disabled:cursor-not-allowed resize-none transition-colors"
             placeholder="¡Vamos equipo!"
           />
         </div>

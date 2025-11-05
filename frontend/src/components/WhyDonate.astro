@@ -1,47 +1,45 @@
 ---
 interface Bullet {
-  icon: string;
   title: string;
   description: string;
 }
 
 const bullets: Bullet[] = [
   {
-    icon: "🎯",
     title: "Impacto Real y Medible",
     description: "Cada peso donado se traduce en proyectos concretos que transforman comunidades vulnerables. Acceso a educación, agua potable y desarrollo sustentable."
   },
   {
-    icon: "🤝",
     title: "Transparencia Total",
     description: "Conoce en tiempo real el avance de la colecta y cómo se distribuyen los fondos. Rendición de cuentas pública y reportes de impacto."
   },
   {
-    icon: "🌱",
     title: "Construimos Futuro",
     description: "No solo entregamos ayuda temporal, creamos capacidades que perduran. Empoderamos a las comunidades para que sean protagonistas de su propio desarrollo."
   }
 ];
 ---
 
-<section class="py-12 md:py-16 bg-white">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
-      ¿Por qué Donar?
-    </h2>
+<div class="h-full flex flex-col">
+  <h2 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-6">
+    ¿Por qué Donar?
+  </h2>
 
-    <div class="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-      {bullets.map((bullet) => (
-        <div class="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 hover:shadow-lg transition-shadow duration-300">
-          <div class="text-5xl mb-4">{bullet.icon}</div>
-          <h3 class="text-xl font-bold text-gray-900 mb-3">
+  <div class="space-y-5 flex-1">
+    {bullets.map((bullet, index) => (
+      <div class="flex gap-3 items-start">
+        <div class="flex-shrink-0 w-7 h-7 rounded-full bg-isf-celeste/10 flex items-center justify-center mt-0.5">
+          <span class="text-isf-celeste font-semibold text-sm">{index + 1}</span>
+        </div>
+        <div class="flex-1">
+          <h3 class="text-base font-semibold text-gray-900 mb-1.5">
             {bullet.title}
           </h3>
-          <p class="text-gray-600 leading-relaxed">
+          <p class="text-gray-600 text-sm leading-relaxed">
             {bullet.description}
           </p>
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
   </div>
-</section>
+</div>

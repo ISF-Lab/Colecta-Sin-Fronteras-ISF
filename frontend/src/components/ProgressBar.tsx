@@ -1,11 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchStats } from '../lib/api.js';
-
-interface Stats {
-  total_recaudado: number;
-  meta: number;
-  total_donaciones: number;
-}
+import { fetchStats, type Stats } from '../lib/api';
 
 export default function ProgressBar() {
   const [stats, setStats] = useState<Stats>({
@@ -69,9 +63,9 @@ export default function ProgressBar() {
 
   if (loading) {
     return (
-      <div className="bg-white rounded-lg shadow-md p-6 animate-pulse">
+      <div className="bg-white rounded-lg shadow-md p-6 animate-pulse h-full">
         <div className="h-4 bg-gray-200 rounded mb-4"></div>
-        <div className="h-8 bg-gray-200 rounded mb-2"></div>
+        <div className="h-6 bg-gray-200 rounded mb-2"></div>
         <div className="h-6 bg-gray-200 rounded w-1/3"></div>
       </div>
     );
@@ -86,7 +80,7 @@ export default function ProgressBar() {
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+    <div className="bg-white rounded-lg shadow-md p-6 space-y-4 h-full flex flex-col">
       {/* Título */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-bold text-gray-900">Progreso de la Colecta</h2>
@@ -96,14 +90,14 @@ export default function ProgressBar() {
       </div>
 
       {/* Barra de progreso */}
-      <div className="relative">
-        <div className="overflow-hidden h-6 text-xs flex rounded-full bg-gray-200">
+      <div className="relative flex-shrink-0">
+        <div className="overflow-hidden h-5 text-xs flex rounded-full bg-gray-200">
           <div
             style={{ width: `${percentage}%` }}
             className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-gradient-to-r from-isf-celeste to-isf-azul transition-all duration-1000 ease-out"
           >
             {percentage > 15 && (
-              <span className="font-semibold">{percentage}%</span>
+              <span className="font-semibold text-xs">{percentage}%</span>
             )}
           </div>
         </div>
@@ -115,35 +109,37 @@ export default function ProgressBar() {
       </div>
 
       {/* Montos */}
-      <div className="flex items-baseline justify-between">
+      <div className="flex items-baseline justify-between flex-shrink-0">
         <div>
-          <p className="text-sm text-gray-600">Recaudado</p>
-          <p className="text-2xl font-bold text-isf-celeste">
+          <p className="text-xs text-gray-600">Recaudado</p>
+          <p className="text-xl font-bold text-isf-celeste">
             {formatCurrency(stats.total_recaudado)}
           </p>
         </div>
         <div className="text-right">
-          <p className="text-sm text-gray-600">Meta</p>
-          <p className="text-2xl font-bold text-gray-900">
+          <p className="text-xs text-gray-600">Meta</p>
+          <p className="text-xl font-bold text-gray-900">
             {formatCurrency(stats.meta)}
           </p>
         </div>
       </div>
 
       {/* Mensaje motivacional */}
-      {percentage >= 100 ? (
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-          <p className="text-green-800 font-semibold text-center">
-            🎉 ¡Meta alcanzada! Gracias a todos los que donaron
-          </p>
-        </div>
-      ) : percentage >= 75 ? (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-blue-800 text-sm text-center">
-            🚀 ¡Estamos cerca! Faltan {formatCurrency(stats.meta - stats.total_recaudado)} para la meta
-          </p>
-        </div>
-      ) : null}
+      <div className="flex-1 flex items-end">
+        {percentage >= 100 ? (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 w-full">
+            <p className="text-green-800 font-semibold text-center text-sm">
+              🎉 ¡Meta alcanzada! Gracias a todos los que donaron
+            </p>
+          </div>
+        ) : percentage >= 75 ? (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 w-full">
+            <p className="text-blue-800 text-xs text-center">
+              🚀 ¡Estamos cerca! Faltan {formatCurrency(stats.meta - stats.total_recaudado)} para la meta
+            </p>
+          </div>
+        ) : null}
+      </div>
     </div>
   );
 }

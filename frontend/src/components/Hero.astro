@@ -11,7 +11,7 @@ const {
   title = "COLECTA ISF 2025",
   subtitle = "Apoya proyectos de impacto social que transforman comunidades en contexto de vulnerabilidad",
   backgroundImage = "/hero-background.jpg",
-  ctaText = "Quiero Donar Ahora",
+  ctaText = "Donar Ahora",
   ctaTarget = "#formulario-donacion"
 } = Astro.props;
 ---
@@ -39,7 +39,7 @@ const {
     <!-- CTA Button -->
     <a 
       href={ctaTarget}
-      class="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-isf-naranja to-orange-600 hover:from-orange-600 hover:to-isf-naranja text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 space-x-2 group"
+      class="hero-cta-button inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-isf-naranja to-orange-600 hover:from-orange-600 hover:to-isf-naranja text-white font-bold text-lg rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 transform hover:scale-105 space-x-2 group"
     >
       <span>{ctaText}</span>
       <svg class="w-5 h-5 group-hover:translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -88,11 +88,11 @@ const {
 </style>
 
 <script>
-  // Smooth scroll al hacer click en el CTA
-  document.addEventListener('DOMContentLoaded', () => {
-    const ctaButton = document.querySelector<HTMLAnchorElement>('a[href^="#"]');
+  // ⚠️ CAMBIO CRÍTICO: Script movido a is:inline para que se ejecute en producción
+  function setupHeroScroll() {
+    const ctaButton = document.querySelector('.hero-cta-button');
     if (ctaButton) {
-      ctaButton.addEventListener('click', (e: Event) => {
+      ctaButton.addEventListener('click', (e) => {
         e.preventDefault();
         const targetId = ctaButton.getAttribute('href');
         if (targetId) {
@@ -106,5 +106,12 @@ const {
         }
       });
     }
-  });
+  }
+
+  // Ejecutar cuando el DOM esté listo
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupHeroScroll);
+  } else {
+    setupHeroScroll();
+  }
 </script>

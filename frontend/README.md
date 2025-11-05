@@ -100,7 +100,7 @@ Esto genera la carpeta `dist/` con los archivos estáticos listos para producci�
 npx wrangler login
 
 # Deploy
-npx wrangler pages deploy dist --project-name=colecta-isf
+npx wrangler pages deploy dist --project-name=colecta-isf-lunes
 ```
 
 **Opción 2: Integración con Git**

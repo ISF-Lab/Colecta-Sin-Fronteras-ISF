@@ -1,214 +1,350 @@
 ---
+// VERSIÓN FINAL REFINADA - Diseño profesional y humano
+// Íconos vectoriales, paleta institucional, microinteracciones sutiles
+
 interface Achievement {
-  title: string;
-  description: string;
-  stat?: string;
+  icon: IconName;
+  stat: string;
+  label: string;
+  sublabel: string;
 }
 
 const achievements: Achievement[] = [
   {
-    title: "Proyectos Ejecutados",
-    description: "Más de 50 proyectos de impacto social en comunidades vulnerables de Chile.",
-    stat: "50+"
+    icon: "target",
+    stat: "30+",
+    label: "Proyectos Ejecutados",
+    sublabel: "Infraestructura comunitaria"
   },
   {
-    title: "Familias Beneficiadas",
-    description: "Hemos llegado a más de 10,000 familias en todo el país.",
-    stat: "10K+"
+    icon: "users",
+    stat: "4,600+",
+    label: "Personas Impactadas",
+    sublabel: "En contexto de vulnerabilidad"
   },
   {
-    title: "Voluntarios Activos",
-    description: "Una red de más de 200 voluntarios comprometidos con el cambio social.",
-    stat: "200+"
+    icon: "heart",
+    stat: "300+",
+    label: "Voluntarios",
+    sublabel: "Desde 2017"
   },
   {
-    title: "Años de Trayectoria",
-    description: "15 años trabajando por un Chile más justo y equitativo.",
-    stat: "15"
+    icon: "globe",
+    stat: "103",
+    label: "Países",
+    sublabel: "Red EWB Internacional"
   }
 ];
 
-const testimonials = [
+const trustIndicators: Array<{
+  title: string;
+  description: string;
+  icon: IconName;
+}> = [
   {
-    name: "María González",
-    role: "Beneficiaria - Proyecto Agua Limpia",
-    quote: "Gracias a ISF, nuestra comunidad ahora tiene acceso a agua potable. Cambió nuestras vidas."
+    title: "Co-creación Comunitaria",
+    description: "Trabajamos junto a las comunidades desde el diagnóstico hasta la implementación, respetando sus saberes y necesidades reales.",
+    icon: "hands"
   },
   {
-    name: "Pedro Ramírez",
-    role: "Voluntario desde 2020",
-    quote: "Ser parte de ISF me ha permitido contribuir directamente al desarrollo de mi país."
+    title: "Metodología Probada",
+    description: "Proceso integral: diagnóstico comunitario, diseño participativo, construcción colaborativa y evaluación de impacto.",
+    icon: "check"
   },
   {
-    name: "Ana Silva",
-    role: "Coordinadora Local",
-    quote: "El trabajo de ISF es profesional, transparente y con resultados tangibles en terreno."
+    title: "Red Internacional",
+    description: "Parte de Engineers Without Borders (EWB), presente en 103 países compartiendo mejores prácticas globales.",
+    icon: "network"
   }
 ];
 
-// URL del video de YouTube (cambiar por la real)
-const youtubeVideoId = "dQw4w9WgXcQ"; // Placeholder - reemplazar con video real
+const recentProjects = [
+  {
+    title: "Agua para San Jorge",
+    location: "Región del Bío Bío",
+    year: "2022-2023",
+    impact: "1.7 millones de litros recuperados al año",
+    image: "/Alfalfal_2.jpg"
+  },
+  {
+    title: "Escalera Vista al Mar",
+    location: "Playa Ancha, Valparaíso",
+    year: "2023",
+    impact: "Acceso seguro para 200+ familias",
+    image: "/vista_al_mar.jpg"
+  },
+  {
+    title: "Energía Solar Comunitaria",
+    location: "Isla Huapi, Los Lagos",
+    year: "2024",
+    impact: "120 hogares con electricidad",
+    image: "/paneles_solares.jpg"
+  }
+];
+
+const testimonial = {
+  quote: "Nosotros hemos pedido encarecidamente agua y golpeado diferentes puertas por no contar con agua en el campamento... Con esta iniciativa se nos abre una pequeña lucecita de esperanza. Puede ser majadero pedir agua, pero no tener agua es indigno.",
+  author: "Dirigenta Comunitaria",
+  project: "Proyecto Agua Cauquenes, 2019",
+  initials: "MC"
+};
+
+// SVG Icons - Typed correctly for Astro
+type IconName = 'target' | 'users' | 'heart' | 'globe' | 'hands' | 'check' | 'network' | 'mapPin' | 'arrowRight';
+
+const icons: Record<IconName, string> = {
+  target: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>',
+  users: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  heart: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>',
+  globe: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>',
+  hands: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>',
+  check: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>',
+  network: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="2"/><path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14"/></svg>',
+  mapPin: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>'
+};
 ---
 
-<section class="py-16 md:py-20 bg-gray-50">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12">
-      Sobre Nosotros
-    </h2>
-
-    <div class="max-w-6xl mx-auto">
+<section class="py-20 md:py-32 bg-gradient-to-b from-white via-gray-50/30 to-white">
+  <div class="container mx-auto px-4 md:px-6">
+    
+    <!-- Header -->
+    <div class="max-w-4xl mx-auto text-center mb-20">
+      <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-6 leading-tight tracking-tight">
+        Potenciando el rol social de la <span class="text-transparent bg-clip-text bg-gradient-to-r from-[#0920A6] to-[#64A7DB]">ingeniería</span>
+      </h2>
       
-      <!-- Grid Superior: Video (izq) + Logros (der) -->
-      <div class="grid lg:grid-cols-2 gap-8 mb-8">
+      <p class="text-lg md:text-xl text-gray-600 leading-relaxed max-w-3xl mx-auto font-light">
+        Facilitamos que voluntarios de ingeniería y otras disciplinas trabajen en proyectos centrados en 
+        agua, energía e infraestructura comunitaria, mejorando la calidad de vida de comunidades en contexto de vulnerabilidad.
+      </p>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="max-w-6xl mx-auto mb-24">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-7">
+        {achievements.map((item, index) => {
+          const colors = ['#0920A6', '#64A7DB', '#BEC625', '#FF961F'];
+          const bgColors = ['#0920A6', '#64A7DB', '#BEC625', '#FF961F'];
+          return (
+            <div 
+              class="stat-card group relative bg-white rounded-3xl p-7 md:p-9 shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 hover:border-transparent overflow-hidden"
+              style={`animation-delay: ${index * 100}ms`}
+            >
+              <div class="absolute inset-0 bg-gradient-to-br opacity-0 group-hover:opacity-5 transition-opacity duration-500" style={`background: linear-gradient(135deg, ${bgColors[index]} 0%, transparent 100%)`}></div>
+              
+              <div class="relative z-10">
+                <div class="w-14 h-14 mb-5 rounded-2xl bg-gradient-to-br flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-sm" style={`background: linear-gradient(135deg, ${colors[index]}15 0%, ${colors[index]}08 100%)`}>
+                  <div class="w-7 h-7" style={`color: ${colors[index]}`} set:html={icons[item.icon]} />
+                </div>
+                
+                <div class="text-5xl md:text-[3.5rem] font-black mb-3 leading-none tracking-tight" style={`color: ${colors[index]}`}>
+                  {item.stat}
+                </div>
+                
+                <div class="text-base md:text-lg font-bold text-gray-900 mb-1.5 leading-tight">
+                  {item.label}
+                </div>
+                
+                <div class="text-xs md:text-sm text-gray-500 leading-relaxed font-light">
+                  {item.sublabel}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- Video + Projects Grid -->
+    <div class="max-w-6xl mx-auto">
+      <div class="grid lg:grid-cols-2 gap-10 md:gap-14 items-start">
         
-        <!-- Video de YouTube -->
-        <div>
-          <div class="relative aspect-video rounded-xl overflow-hidden shadow-lg bg-gray-900">
+        <!-- Video Section -->
+        <div class="space-y-7">
+          <div>
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+              Conoce nuestro impacto
+            </h3>
+            <p class="text-gray-500 font-light">7 años transformando realidades</p>
+          </div>
+          
+          <div class="relative aspect-video rounded-3xl overflow-hidden shadow-2xl bg-gray-900 border border-gray-200 group hover:shadow-[#64A7DB]/20 transition-all duration-500">
             <iframe
-              src="https://www.youtube.com/embed/_MpcewCiwQg?si=KlpBfB18jOcaK52c"
-              title="Video ISF Chile"
+              src="https://www.youtube-nocookie.com/embed/_MpcewCiwQg"
+              title="Ingeniería Sin Fronteras Chile - 7 años transformando realidades"
+              loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowfullscreen
-              class="absolute inset-0 w-full h-full"
+              class="absolute inset-0 w-full h-full border-0"
             ></iframe>
+            <div class="absolute inset-0 border-2 border-white/10 rounded-3xl pointer-events-none"></div>
           </div>
           
-          <p class="mt-3 text-sm text-gray-600 text-center">
-            Conoce más sobre nuestro trabajo y el impacto que generamos juntos
-          </p>
-        </div>
-
-        <!-- Logros -->
-        <div>
-          <h3 class="text-xl font-bold text-gray-900 mb-4 flex items-center">
-            <span class="text-2xl mr-2">📊</span>
-            Nuestros Logros
-          </h3>
-          <div class="grid grid-cols-2 gap-4">
-            {achievements.map((achievement) => (
-              <div class="bg-white rounded-lg p-4 border-2 border-gray-200 hover:border-isf-celeste transition-colors">
-                <div class="text-3xl font-bold text-isf-azul mb-1">
-                  {achievement.stat}
+          <!-- Testimonial -->
+          <div class="relative bg-gradient-to-br from-white to-gray-50 rounded-3xl p-7 md:p-8 border-l-4 shadow-sm hover:shadow-lg transition-all duration-500" style="border-left-color: #FF2CAC">
+            <div class="absolute top-4 right-4 w-20 h-20 rounded-full blur-2xl opacity-10" style="background: #FF2CAC"></div>
+            
+            <div class="relative z-10">
+              <svg class="w-10 h-10 mb-4 opacity-20" style="color: #FF2CAC" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+              </svg>
+              
+              <p class="text-gray-700 leading-relaxed mb-6 text-[15px] font-light italic">
+                {testimonial.quote}
+              </p>
+              
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl flex items-center justify-center font-bold text-base text-white shadow-md" style="background: linear-gradient(135deg, #FF2CAC 0%, #FF961F 100%)">
+                  {testimonial.initials}
                 </div>
-                <div class="text-sm font-semibold text-gray-900 mb-1">
-                  {achievement.title}
-                </div>
-                <div class="text-xs text-gray-600 leading-relaxed">
-                  {achievement.description}
+                <div>
+                  <p class="font-semibold text-gray-900 text-base">{testimonial.author}</p>
+                  <p class="text-sm text-gray-500 font-light">{testimonial.project}</p>
                 </div>
               </div>
-            ))}
+            </div>
           </div>
+        </div>
+
+        <!-- Projects Section -->
+        <div class="space-y-7">
+          <div>
+            <h3 class="text-2xl md:text-3xl font-bold text-gray-900 mb-2 tracking-tight">
+              Proyectos recientes
+            </h3>
+            <p class="text-gray-500 font-light">Impacto medible en comunidades</p>
+          </div>
+          
+          <div class="space-y-4">
+            {recentProjects.map((project, index) => {
+              const accentColors = ['#64A7DB', '#BEC625', '#FF961F'];
+              return (
+                <div class="project-card group bg-white rounded-2xl border-2 border-gray-100 overflow-hidden hover:border-transparent hover:shadow-xl transition-all duration-500">
+                  <div class="flex gap-5">
+                    <div class="w-36 h-36 flex-shrink-0 relative overflow-hidden">
+                      <img 
+                        src={project.image} 
+                        alt={project.title}
+                        class="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
+                      <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                    
+                    <div class="flex-1 py-5 pr-5">
+                      <div class="flex items-start justify-between gap-3 mb-2.5">
+                        <h4 class="font-bold text-gray-900 text-lg leading-tight group-hover:text-[#0920A6] transition-colors">
+                          {project.title}
+                        </h4>
+                        <span class="text-xs font-semibold px-3 py-1.5 rounded-full whitespace-nowrap shadow-sm" style={`background: ${accentColors[index]}15; color: ${accentColors[index]}`}>
+                          {project.year}
+                        </span>
+                      </div>
+                      
+                      <div class="flex items-center gap-1.5 text-sm text-gray-600 mb-2.5 font-light">
+                        <div class="w-4 h-4" style="color: #FF961F" set:html={icons.mapPin} />
+                        <span>{project.location}</span>
+                      </div>
+                      
+                      <p class="text-sm font-semibold" style="color: #0920A6">
+                        {project.impact}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <a 
+            href="#proyectos" 
+            class="inline-flex items-center gap-2.5 font-semibold transition-all duration-300 group/link mt-2 hover:gap-4"
+            style="color: #0920A6"
+          >
+            <span>Ver todos nuestros proyectos</span>
+            <div class="w-5 h-5 transform group-hover/link:translate-x-1 transition-transform" set:html={icons.arrowRight} />
+          </a>
         </div>
 
       </div>
-
-      <!-- Testimonios Carousel - Centrado y más alargado -->
-      <div class="max-w-4xl mx-auto">
-        <h3 class="text-xl font-bold text-gray-900 mb-6 text-center flex items-center justify-center">
-          <span class="text-2xl mr-2">💬</span>
-          Testimonios
-        </h3>
-        
-        <div class="relative">
-          <div class="testimonial-carousel">
-            {testimonials.map((testimonial, index) => (
-              <div 
-                class="testimonial-slide bg-white rounded-xl p-8 border-2 border-gray-200 shadow-lg"
-                data-index={index}
-              >
-                <div class="flex items-start space-x-1 mb-4 justify-center">
-                  <span class="text-yellow-400 text-2xl">⭐</span>
-                  <span class="text-yellow-400 text-2xl">⭐</span>
-                  <span class="text-yellow-400 text-2xl">⭐</span>
-                  <span class="text-yellow-400 text-2xl">⭐</span>
-                  <span class="text-yellow-400 text-2xl">⭐</span>
-                </div>
-                <p class="text-gray-700 italic mb-6 text-base leading-relaxed text-center max-w-2xl mx-auto">
-                  "{testimonial.quote}"
-                </p>
-                <div class="border-t pt-4 text-center">
-                  <p class="font-semibold text-gray-900 text-base">
-                    {testimonial.name}
-                  </p>
-                  <p class="text-sm text-gray-500">
-                    {testimonial.role}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          <!-- Dots indicator -->
-          <div class="flex justify-center space-x-3 mt-6">
-            {testimonials.map((_, index) => (
-              <button
-                class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-isf-celeste transition-colors"
-                data-index={index}
-                aria-label={`Ver testimonio ${index + 1}`}
-              ></button>
-            ))}
-          </div>
-        </div>
-      </div>
-
     </div>
+
   </div>
 </section>
 
-<script>
-  // Simple carousel functionality
-  let currentSlide = 0;
-  const slides = document.querySelectorAll('.testimonial-slide');
-  const dots = document.querySelectorAll('.carousel-dot');
-  
-  function showSlide(index: number) {
-    slides.forEach((slide, i) => {
-      const element = slide as HTMLElement;
-      element.style.display = i === index ? 'block' : 'none';
-    });
-    
-    dots.forEach((dot, i) => {
-      dot.classList.toggle('bg-isf-celeste', i === index);
-      dot.classList.toggle('bg-gray-300', i !== index);
-    });
-    
-    currentSlide = index;
-  }
-  
-  // Auto-rotate carousel every 5 seconds
-  setInterval(() => {
-    currentSlide = (currentSlide + 1) % slides.length;
-    showSlide(currentSlide);
-  }, 5000);
-  
-  // Dot click handlers
-  dots.forEach((dot, index) => {
-    dot.addEventListener('click', () => {
-      showSlide(index);
-    });
-  });
-  
-  // Initialize
-  showSlide(0);
-</script>
-
 <style>
-  .testimonial-carousel {
-    position: relative;
-    min-height: 240px;
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
-  .testimonial-slide {
-    display: none;
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 
-  .carousel-dot {
-    cursor: pointer;
-    transition: all 0.3s ease;
+  .stat-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
   }
 
-  .carousel-dot:hover {
-    transform: scale(1.3);
+  .trust-card {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+
+  .trust-card:nth-child(1) { animation-delay: 0ms; }
+  .trust-card:nth-child(2) { animation-delay: 100ms; }
+  .trust-card:nth-child(3) { animation-delay: 200ms; }
+
+  .project-card {
+    animation: fadeInUp 0.5s ease-out forwards;
+  }
+
+  .project-card:nth-child(1) { animation-delay: 0ms; }
+  .project-card:nth-child(2) { animation-delay: 100ms; }
+  .project-card:nth-child(3) { animation-delay: 200ms; }
+
+  /* Smooth focus states */
+  a:focus-visible, button:focus-visible {
+    outline: 3px solid #64A7DB;
+    outline-offset: 4px;
+    border-radius: 9999px;
+  }
+
+  /* Improve text rendering */
+  h2, h3, h4 {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #64A7DB;
+    border-radius: 10px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #0920A6;
   }
 </style>

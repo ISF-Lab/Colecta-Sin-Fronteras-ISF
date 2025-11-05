@@ -24,22 +24,35 @@ const teamSlug = teamParam || 'general';
     title="COLECTA ISF 2025"
     subtitle="Apoya proyectos de impacto social que transforman comunidades en contexto de vulnerabilidad"
     backgroundImage="/hero-background.jpg"
-    ctaText="Quiero Donar Ahora"
+    ctaText="Donar Ahora"
     ctaTarget="#formulario-donacion"
   />
 
-  <!-- 2. Barra de Progreso -->
-  <section class="py-8 md:py-12">
+  <!-- 2. Barra de Progreso + ¿Por qué Donar? (LADO A LADO) -->
+  <section class="py-8 md:py-12 bg-white border-b border-gray-200">
     <div class="container mx-auto px-4">
-      <ProgressBar client:load />
+      <div class="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto items-start">
+        
+        <!-- Barra de Progreso -->
+        <div>
+          <ProgressBar client:load />
+        </div>
+
+        <!-- ¿Por qué Donar? -->
+        <div>
+          <WhyDonate />
+        </div>
+
+      </div>
     </div>
   </section>
 
-  <!-- 3. ¿Por qué Donar? -->
-  <WhyDonate />
-
-  <!-- 4. Formulario de Donación + Ranking (2 columnas) -->
-  <section id="formulario-donacion" class="bg-gray-50 py-12 md:py-16 scroll-mt-20">
+  <!-- 3. Formulario de Donación + Ranking (2 columnas) -->
+  <!-- ⚠️ IMPORTANTE: ID agregado para el scroll y botón flotante -->
+  <section 
+    id="formulario-donacion" 
+    class="bg-gradient-to-r from-[#64A7DB] to-[#8EC5E6] text-white py-16 scroll-mt-20"
+  >
     <div class="container mx-auto px-4">
       <div class="grid lg:grid-cols-2 gap-8 max-w-7xl mx-auto">
         
@@ -66,13 +79,13 @@ const teamSlug = teamParam || 'general';
     </div>
   </section>
 
-  <!-- 5. Sobre Nosotros (Video + Logros + Testimonios) -->
+  <!-- 4. Sobre Nosotros (Video + Logros + Testimonios) -->
   <AboutUs />
 
-  <!-- 6. Sé parte del cambio -->
+  <!-- 5. Sé parte del cambio -->
   <BePartOfChange />
 
-  <!-- 7. FAQ Section -->
+  <!-- 6. FAQ Section -->
   <section class="py-12 md:py-16 bg-white">
     <div class="container mx-auto px-4">
       <div class="max-w-3xl mx-auto">

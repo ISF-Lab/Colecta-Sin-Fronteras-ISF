@@ -18,12 +18,12 @@ export function corsHeaders(frontendUrl = '*') {
 /**
  * Retorna una respuesta JSON exitosa
  */
-export function jsonResponse(data, status = 200) {
+export function jsonResponse(data, status = 200, frontendUrl = '*') {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
       'Content-Type': 'application/json',
-      ...corsHeaders()
+      ...corsHeaders(frontendUrl)
     }
   });
 }
@@ -34,8 +34,9 @@ export function jsonResponse(data, status = 200) {
  * @param {string} code - Código de error (ej: 'VALIDATION_ERROR')
  * @param {string} message - Mensaje legible para el usuario
  * @param {number} status - HTTP status code (default: 400)
+ * @param {string} frontendUrl - URL del frontend para CORS
  */
-export function jsonError(code, message, status = 400) {
+export function jsonError(code, message, status = 400, frontendUrl = '*') {
   return new Response(JSON.stringify({
     ok: false,
     error: code,
@@ -44,7 +45,7 @@ export function jsonError(code, message, status = 400) {
     status,
     headers: {
       'Content-Type': 'application/json',
-      ...corsHeaders()
+      ...corsHeaders(frontendUrl)
     }
   });
 }
