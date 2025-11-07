@@ -1,14 +1,19 @@
 ---
 import Layout from '../components/Layout.astro';
+import DonationStatusChecker from '../components/DonationStatusChecker';
 
 // Obtener el parámetro order de la URL
 const orderParam = Astro.url.searchParams.get('order');
+const backendUrl = import.meta.env.PUBLIC_BACKEND_URL;
 ---
 
 <Layout 
   title="¡Gracias por tu Donación! - Colecta ISF 2025"
   description="Tu donación ha sido recibida exitosamente. Gracias por apoyar nuestra causa."
 >
+  {orderParam && backendUrl && (
+    <DonationStatusChecker client:load orderId={orderParam} backendUrl={backendUrl} />
+  )}
   <div class="container mx-auto px-4 py-12 md:py-16">
     
     <!-- Success Message -->

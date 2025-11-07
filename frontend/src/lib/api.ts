@@ -133,3 +133,47 @@ export async function submitDonation(
     };
   }
 }
+
+/**
+ * Consulta el estado de una donación por order_id
+ * @param backendUrl - URL del backend Worker
+ * @param orderId - Order ID de la donación
+ * @returns Promise con { ok, pagado, estado, error }
+ */
+export async function checkDonationStatus(
+  backendUrl: string,
+  orderId: string
+): Promise<{
+  ok: boolean;
+  pagado?: boolean;
+  estado?: string;
+  error?: string;
+}> {
+  try {
+    const response = await fetch(`${backendUrl}/api/donacion/${orderId}`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      return {
+        ok: false,
+        error: result.error || 'ERROR_DESCONOCIDO',
+      };
+    }
+
+    return {
+      ok: true,
+      pagado: result.pagado,
+      estado: result.estado,
+    };
+  } catch (error: any) {
+    console.error('Error checking donation status:', error);
+    return {
+      ok: false,
+      error: 'ERROR_RED',
+    };
+  }
+}

@@ -5,6 +5,7 @@
 
 import { handleDonate } from './handlers/donate.js';
 import { handleWebhook } from './handlers/webhook.js';
+import { handleCheckDonation } from './handlers/check-donation.js';
 import { corsHeaders, jsonError } from './utils/response.js';
 
 export default {
@@ -51,9 +52,19 @@ export default {
       }
     }
 
+    // GET /api/donacion/:orderId - Consultar estado de una donación
+    if (url.pathname.startsWith('/api/donacion/') && request.method === 'GET') {
+      try {
+        return await handleCheckDonation(request, env);
+      } catch (error) {
+        console.error('[ERROR] /api/donacion/:orderId:', error);
+        return jsonError('SERVER_ERROR', 'Error interno del servidor', 500, env.FRONTEND_URL);
+      }
+    }
+
     // ========================================================================
     // 404 - Ruta no encontrada
     // ========================================================================
-    return jsonError('NOT_FOUND', 'Ruta no encontrada', 404);
+    return jsonError('NOT_FOUND', 'Ruta no encontrada', 404, env.FRONTEND_URL);
   }
 };
