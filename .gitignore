@@ -23,3 +23,6 @@ yarn-error.log*
 # Metadatos del sistema operativo
 .DS_Store
 Thumbs.db
+
+# Archivos de respaldo
+*.bak

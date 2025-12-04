@@ -1,0 +1,671 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_ColectaISF" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.0.0">
+  <bpmn:process id="Process_ColectaISF" name="Sistema de Donaciones - Colecta ISF Chile" isExecutable="true">
+    
+    <!-- INICIO -->
+    <bpmn:startEvent id="StartEvent_1" name="Usuario ingresa a la plataforma">
+      <bpmn:outgoing>Flow_01</bpmn:outgoing>
+    </bpmn:startEvent>
+    
+    <!-- FORMULARIO -->
+    <bpmn:userTask id="Task_Formulario" name="Llenar formulario de donación">
+      <bpmn:documentation>
+        Campos del formulario:
+        - Nombre completo (requerido)
+        - Email (requerido)
+        - Monto: CLP 1.000 - 500.000 (requerido)
+        - Equipo a apoyar (opcional)
+        - Mensaje (opcional, max 500 chars)
+        - Cloudflare Turnstile (captcha)
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_01</bpmn:incoming>
+      <bpmn:outgoing>Flow_02</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- VALIDAR TURNSTILE -->
+    <bpmn:serviceTask id="Task_ValidarTurnstile" name="Validar Cloudflare Turnstile">
+      <bpmn:documentation>
+        Endpoint: POST /api/donar
+        Valida token anti-bot contra API de Cloudflare
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_02</bpmn:incoming>
+      <bpmn:outgoing>Flow_03</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_Turnstile" name="¿Válido?">
+      <bpmn:incoming>Flow_03</bpmn:incoming>
+      <bpmn:outgoing>Flow_04_OK</bpmn:outgoing>
+      <bpmn:outgoing>Flow_04_Error</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- VALIDAR DATOS -->
+    <bpmn:serviceTask id="Task_ValidarDatos" name="Validar datos de donación">
+      <bpmn:documentation>
+        Validaciones:
+        - Email válido (regex)
+        - Monto entre 1.000 y 500.000
+        - Nombre no vacío
+        - Team slug válido
+        - Mensaje max 500 chars
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_04_OK</bpmn:incoming>
+      <bpmn:outgoing>Flow_05</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_Datos" name="¿Válido?">
+      <bpmn:incoming>Flow_05</bpmn:incoming>
+      <bpmn:outgoing>Flow_06_OK</bpmn:outgoing>
+      <bpmn:outgoing>Flow_06_Error</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- GENERAR ORDER ID -->
+    <bpmn:serviceTask id="Task_GenerarOrderID" name="Generar Order ID único">
+      <bpmn:documentation>
+        Formato: ISF-{timestamp}-{random6}
+        Ejemplo: ISF-1732234567890-A3X9K2
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_06_OK</bpmn:incoming>
+      <bpmn:outgoing>Flow_07</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- BUSCAR EQUIPO -->
+    <bpmn:serviceTask id="Task_BuscarEquipo" name="Buscar equipo en DB">
+      <bpmn:documentation>
+        SELECT * FROM teams WHERE slug = ?
+        Si no existe, usar 'general'
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_07</bpmn:incoming>
+      <bpmn:outgoing>Flow_08</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- CREAR REGISTRO PENDIENTE -->
+    <bpmn:serviceTask id="Task_CrearRegistro" name="Crear registro en DB (pendiente)">
+      <bpmn:documentation>
+        INSERT INTO donations:
+        - order_id (único)
+        - nombre, email, monto, mensaje
+        - team_id
+        - estado: 'pendiente'
+        - created_at: NOW()
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_08</bpmn:incoming>
+      <bpmn:outgoing>Flow_09</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- CREAR TRANSACCIÓN PAYKU -->
+    <bpmn:serviceTask id="Task_CrearPayku" name="Crear transacción en Payku">
+      <bpmn:documentation>
+        POST https://app.payku.cl/api/transaction
+        Headers: Authorization Bearer {PAYKU_PRIVATE_KEY}
+        Body: { email, order, subject, amount, urlreturn, urlnotify }
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_09</bpmn:incoming>
+      <bpmn:outgoing>Flow_10</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- RETORNAR URL -->
+    <bpmn:serviceTask id="Task_RetornarURL" name="Retornar URL de pago">
+      <bpmn:documentation>
+        Response: { ok: true, url: "https://app.payku.cl/...", order: "ISF-..." }
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_10</bpmn:incoming>
+      <bpmn:outgoing>Flow_11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <!-- PAGAR EN PAYKU -->
+    <bpmn:userTask id="Task_PagarPayku" name="Realizar pago en Payku">
+      <bpmn:documentation>
+        Usuario redirigido a Payku:
+        - Elige método de pago
+        - Completa el pago
+        - Redirigido de vuelta
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_11</bpmn:incoming>
+      <bpmn:outgoing>Flow_12</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <bpmn:exclusiveGateway id="Gateway_Pago" name="¿Pago exitoso?">
+      <bpmn:incoming>Flow_12</bpmn:incoming>
+      <bpmn:outgoing>Flow_13_OK</bpmn:outgoing>
+      <bpmn:outgoing>Flow_13_Cancel</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    
+    <!-- CONFIRMACIÓN -->
+    <bpmn:userTask id="Task_Confirmacion" name="Ver página de confirmación">
+      <bpmn:documentation>
+        Página /gracias muestra:
+        - Mensaje de agradecimiento
+        - Order ID
+        - Estado del pago
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_13_OK</bpmn:incoming>
+      <bpmn:outgoing>Flow_14</bpmn:outgoing>
+    </bpmn:userTask>
+    
+    <!-- FIN EXITOSO -->
+    <bpmn:endEvent id="EndEvent_Success" name="Donación completada">
+      <bpmn:incoming>Flow_14</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- FIN CANCELADO -->
+    <bpmn:endEvent id="EndEvent_Cancel" name="Pago cancelado">
+      <bpmn:incoming>Flow_13_Cancel</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- ERROR VALIDACIÓN -->
+    <bpmn:serviceTask id="Task_Error" name="Retornar error 400">
+      <bpmn:documentation>
+        Response: { ok: false, code: "VALIDATION_ERROR", message: "..." }
+      </bpmn:documentation>
+      <bpmn:incoming>Flow_04_Error</bpmn:incoming>
+      <bpmn:incoming>Flow_06_Error</bpmn:incoming>
+      <bpmn:outgoing>Flow_15</bpmn:outgoing>
+    </bpmn:serviceTask>
+    
+    <bpmn:endEvent id="EndEvent_Error" name="Error retornado">
+      <bpmn:incoming>Flow_15</bpmn:incoming>
+    </bpmn:endEvent>
+    
+    <!-- SUBPROCESO: WEBHOOK -->
+    <bpmn:subProcess id="SubProcess_Webhook" name="Procesamiento de Webhook (Asíncrono)">
+      <bpmn:startEvent id="StartEvent_Webhook" name="Webhook recibido de Payku">
+        <bpmn:outgoing>Flow_W01</bpmn:outgoing>
+      </bpmn:startEvent>
+      
+      <bpmn:serviceTask id="Task_LogWebhook" name="Registrar en webhook_events">
+        <bpmn:documentation>
+          INSERT INTO webhook_events (order_id, payload, created_at)
+          SIEMPRE registrar ANTES de validar
+        </bpmn:documentation>
+        <bpmn:incoming>Flow_W01</bpmn:incoming>
+        <bpmn:outgoing>Flow_W02</bpmn:outgoing>
+      </bpmn:serviceTask>
+      
+      <bpmn:serviceTask id="Task_ValidarFirma" name="Validar verification_key">
+        <bpmn:documentation>
+          Verifica que el webhook viene de Payku
+        </bpmn:documentation>
+        <bpmn:incoming>Flow_W02</bpmn:incoming>
+        <bpmn:outgoing>Flow_W03</bpmn:outgoing>
+      </bpmn:serviceTask>
+      
+      <bpmn:exclusiveGateway id="Gateway_Firma" name="¿Válido?">
+        <bpmn:incoming>Flow_W03</bpmn:incoming>
+        <bpmn:outgoing>Flow_W04_OK</bpmn:outgoing>
+        <bpmn:outgoing>Flow_W04_Error</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      
+      <bpmn:serviceTask id="Task_BuscarDonacion" name="Buscar donación por order_id">
+        <bpmn:documentation>
+          SELECT * FROM donations WHERE order_id = ?
+        </bpmn:documentation>
+        <bpmn:incoming>Flow_W04_OK</bpmn:incoming>
+        <bpmn:outgoing>Flow_W05</bpmn:outgoing>
+      </bpmn:serviceTask>
+      
+      <bpmn:exclusiveGateway id="Gateway_Procesado" name="¿Ya procesado?">
+        <bpmn:documentation>
+          Idempotencia: Si ya está pagado/fallido, skip
+        </bpmn:documentation>
+        <bpmn:incoming>Flow_W05</bpmn:incoming>
+        <bpmn:outgoing>Flow_W06_No</bpmn:outgoing>
+        <bpmn:outgoing>Flow_W06_Si</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      
+      <bpmn:serviceTask id="Task_ActualizarEstado" name="Actualizar estado de donación">
+        <bpmn:documentation>
+          UPDATE donations SET
+            estado = 'pagado' | 'fallido',
+            payku_transaction_id = ?,
+            paid_at = NOW()
+          WHERE order_id = ?
+        </bpmn:documentation>
+        <bpmn:incoming>Flow_W06_No</bpmn:incoming>
+        <bpmn:outgoing>Flow_W07</bpmn:outgoing>
+      </bpmn:serviceTask>
+      
+      <bpmn:endEvent id="EndEvent_Webhook" name="Retornar 200 OK">
+        <bpmn:documentation>
+          SIEMPRE retornar 200, incluso con errores
+        </bpmn:documentation>
+        <bpmn:incoming>Flow_W07</bpmn:incoming>
+        <bpmn:incoming>Flow_W06_Si</bpmn:incoming>
+        <bpmn:incoming>Flow_W04_Error</bpmn:incoming>
+      </bpmn:endEvent>
+      
+      <!-- Flows del subproceso -->
+      <bpmn:sequenceFlow id="Flow_W01" sourceRef="StartEvent_Webhook" targetRef="Task_LogWebhook" />
+      <bpmn:sequenceFlow id="Flow_W02" sourceRef="Task_LogWebhook" targetRef="Task_ValidarFirma" />
+      <bpmn:sequenceFlow id="Flow_W03" sourceRef="Task_ValidarFirma" targetRef="Gateway_Firma" />
+      <bpmn:sequenceFlow id="Flow_W04_OK" name="Sí" sourceRef="Gateway_Firma" targetRef="Task_BuscarDonacion" />
+      <bpmn:sequenceFlow id="Flow_W04_Error" name="No" sourceRef="Gateway_Firma" targetRef="EndEvent_Webhook" />
+      <bpmn:sequenceFlow id="Flow_W05" sourceRef="Task_BuscarDonacion" targetRef="Gateway_Procesado" />
+      <bpmn:sequenceFlow id="Flow_W06_No" name="No" sourceRef="Gateway_Procesado" targetRef="Task_ActualizarEstado" />
+      <bpmn:sequenceFlow id="Flow_W06_Si" name="Sí (skip)" sourceRef="Gateway_Procesado" targetRef="EndEvent_Webhook" />
+      <bpmn:sequenceFlow id="Flow_W07" sourceRef="Task_ActualizarEstado" targetRef="EndEvent_Webhook" />
+    </bpmn:subProcess>
+    
+    <!-- TAREAS EN TIEMPO REAL (PARALELAS) -->
+    <bpmn:serviceTask id="Task_ProgressBar" name="Actualizar barra de progreso (cada 10s)">
+      <bpmn:documentation>
+        Frontend React: Fetch GET a Supabase view 'public_stats'
+        Muestra: Total recaudado / Meta
+      </bpmn:documentation>
+    </bpmn:serviceTask>
+    
+    <bpmn:serviceTask id="Task_Ranking" name="Actualizar ranking de equipos (cada 10s)">
+      <bpmn:documentation>
+        Frontend React: Fetch GET a Supabase view 'team_rankings'
+        Tabla ordenada por total recaudado
+      </bpmn:documentation>
+    </bpmn:serviceTask>
+    
+    <!-- SEQUENCE FLOWS PRINCIPALES -->
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_1" targetRef="Task_Formulario" />
+    <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_Formulario" targetRef="Task_ValidarTurnstile" />
+    <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_ValidarTurnstile" targetRef="Gateway_Turnstile" />
+    <bpmn:sequenceFlow id="Flow_04_OK" name="Sí" sourceRef="Gateway_Turnstile" targetRef="Task_ValidarDatos" />
+    <bpmn:sequenceFlow id="Flow_04_Error" name="No" sourceRef="Gateway_Turnstile" targetRef="Task_Error" />
+    <bpmn:sequenceFlow id="Flow_05" sourceRef="Task_ValidarDatos" targetRef="Gateway_Datos" />
+    <bpmn:sequenceFlow id="Flow_06_OK" name="Sí" sourceRef="Gateway_Datos" targetRef="Task_GenerarOrderID" />
+    <bpmn:sequenceFlow id="Flow_06_Error" name="No" sourceRef="Gateway_Datos" targetRef="Task_Error" />
+    <bpmn:sequenceFlow id="Flow_07" sourceRef="Task_GenerarOrderID" targetRef="Task_BuscarEquipo" />
+    <bpmn:sequenceFlow id="Flow_08" sourceRef="Task_BuscarEquipo" targetRef="Task_CrearRegistro" />
+    <bpmn:sequenceFlow id="Flow_09" sourceRef="Task_CrearRegistro" targetRef="Task_CrearPayku" />
+    <bpmn:sequenceFlow id="Flow_10" sourceRef="Task_CrearPayku" targetRef="Task_RetornarURL" />
+    <bpmn:sequenceFlow id="Flow_11" sourceRef="Task_RetornarURL" targetRef="Task_PagarPayku" />
+    <bpmn:sequenceFlow id="Flow_12" sourceRef="Task_PagarPayku" targetRef="Gateway_Pago" />
+    <bpmn:sequenceFlow id="Flow_13_OK" name="Sí" sourceRef="Gateway_Pago" targetRef="Task_Confirmacion" />
+    <bpmn:sequenceFlow id="Flow_13_Cancel" name="No" sourceRef="Gateway_Pago" targetRef="EndEvent_Cancel" />
+    <bpmn:sequenceFlow id="Flow_14" sourceRef="Task_Confirmacion" targetRef="EndEvent_Success" />
+    <bpmn:sequenceFlow id="Flow_15" sourceRef="Task_Error" targetRef="EndEvent_Error" />
+    
+  </bpmn:process>
+  
+  <!-- DIAGRAMA VISUAL (DI) -->
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_ColectaISF">
+      
+      <!-- Start Event -->
+      <bpmndi:BPMNShape id="StartEvent_1_di" bpmnElement="StartEvent_1">
+        <dc:Bounds x="152" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="132" y="145" width="76" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Formulario -->
+      <bpmndi:BPMNShape id="Task_Formulario_di" bpmnElement="Task_Formulario">
+        <dc:Bounds x="240" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Validar Turnstile -->
+      <bpmndi:BPMNShape id="Task_ValidarTurnstile_di" bpmnElement="Task_ValidarTurnstile">
+        <dc:Bounds x="390" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Gateway Turnstile -->
+      <bpmndi:BPMNShape id="Gateway_Turnstile_di" bpmnElement="Gateway_Turnstile" isMarkerVisible="true">
+        <dc:Bounds x="540" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="542" y="71" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Validar Datos -->
+      <bpmndi:BPMNShape id="Task_ValidarDatos_di" bpmnElement="Task_ValidarDatos">
+        <dc:Bounds x="640" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Gateway Datos -->
+      <bpmndi:BPMNShape id="Gateway_Datos_di" bpmnElement="Gateway_Datos" isMarkerVisible="true">
+        <dc:Bounds x="790" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="792" y="71" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Generar OrderID -->
+      <bpmndi:BPMNShape id="Task_GenerarOrderID_di" bpmnElement="Task_GenerarOrderID">
+        <dc:Bounds x="890" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Buscar Equipo -->
+      <bpmndi:BPMNShape id="Task_BuscarEquipo_di" bpmnElement="Task_BuscarEquipo">
+        <dc:Bounds x="1040" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Crear Registro -->
+      <bpmndi:BPMNShape id="Task_CrearRegistro_di" bpmnElement="Task_CrearRegistro">
+        <dc:Bounds x="1190" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Crear Payku -->
+      <bpmndi:BPMNShape id="Task_CrearPayku_di" bpmnElement="Task_CrearPayku">
+        <dc:Bounds x="1340" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Retornar URL -->
+      <bpmndi:BPMNShape id="Task_RetornarURL_di" bpmnElement="Task_RetornarURL">
+        <dc:Bounds x="1490" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Pagar Payku -->
+      <bpmndi:BPMNShape id="Task_PagarPayku_di" bpmnElement="Task_PagarPayku">
+        <dc:Bounds x="1640" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Gateway Pago -->
+      <bpmndi:BPMNShape id="Gateway_Pago_di" bpmnElement="Gateway_Pago" isMarkerVisible="true">
+        <dc:Bounds x="1790" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1772" y="71" width="86" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Confirmacion -->
+      <bpmndi:BPMNShape id="Task_Confirmacion_di" bpmnElement="Task_Confirmacion">
+        <dc:Bounds x="1890" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- End Event Success -->
+      <bpmndi:BPMNShape id="EndEvent_Success_di" bpmnElement="EndEvent_Success">
+        <dc:Bounds x="2042" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2033" y="145" width="54" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- End Event Cancel -->
+      <bpmndi:BPMNShape id="EndEvent_Cancel_di" bpmnElement="EndEvent_Cancel">
+        <dc:Bounds x="1797" y="212" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1775" y="255" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Error -->
+      <bpmndi:BPMNShape id="Task_Error_di" bpmnElement="Task_Error">
+        <dc:Bounds x="640" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- End Event Error -->
+      <bpmndi:BPMNShape id="EndEvent_Error_di" bpmnElement="EndEvent_Error">
+        <dc:Bounds x="792" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="770" y="275" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- SubProcess Webhook -->
+      <bpmndi:BPMNShape id="SubProcess_Webhook_di" bpmnElement="SubProcess_Webhook" isExpanded="true">
+        <dc:Bounds x="240" y="350" width="1600" height="300" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Webhook Start -->
+      <bpmndi:BPMNShape id="StartEvent_Webhook_di" bpmnElement="StartEvent_Webhook">
+        <dc:Bounds x="280" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="257" y="525" width="82" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Log Webhook -->
+      <bpmndi:BPMNShape id="Task_LogWebhook_di" bpmnElement="Task_LogWebhook">
+        <dc:Bounds x="370" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Validar Firma -->
+      <bpmndi:BPMNShape id="Task_ValidarFirma_di" bpmnElement="Task_ValidarFirma">
+        <dc:Bounds x="520" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Gateway Firma -->
+      <bpmndi:BPMNShape id="Gateway_Firma_di" bpmnElement="Gateway_Firma" isMarkerVisible="true">
+        <dc:Bounds x="670" y="475" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="672" y="451" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Buscar Donacion -->
+      <bpmndi:BPMNShape id="Task_BuscarDonacion_di" bpmnElement="Task_BuscarDonacion">
+        <dc:Bounds x="770" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Gateway Procesado -->
+      <bpmndi:BPMNShape id="Gateway_Procesado_di" bpmnElement="Gateway_Procesado" isMarkerVisible="true">
+        <dc:Bounds x="920" y="475" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="903" y="451" width="84" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Actualizar Estado -->
+      <bpmndi:BPMNShape id="Task_ActualizarEstado_di" bpmnElement="Task_ActualizarEstado">
+        <dc:Bounds x="1020" y="460" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Webhook End -->
+      <bpmndi:BPMNShape id="EndEvent_Webhook_di" bpmnElement="EndEvent_Webhook">
+        <dc:Bounds x="1172" y="482" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1150" y="525" width="80" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      
+      <!-- Task ProgressBar -->
+      <bpmndi:BPMNShape id="Task_ProgressBar_di" bpmnElement="Task_ProgressBar">
+        <dc:Bounds x="240" y="700" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- Task Ranking -->
+      <bpmndi:BPMNShape id="Task_Ranking_di" bpmnElement="Task_Ranking">
+        <dc:Bounds x="390" y="700" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      
+      <!-- EDGES (Flujos) -->
+      
+      <!-- Flow 01 -->
+      <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01">
+        <di:waypoint x="188" y="120" />
+        <di:waypoint x="240" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 02 -->
+      <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02">
+        <di:waypoint x="340" y="120" />
+        <di:waypoint x="390" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 03 -->
+      <bpmndi:BPMNEdge id="Flow_03_di" bpmnElement="Flow_03">
+        <di:waypoint x="490" y="120" />
+        <di:waypoint x="540" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 04 OK -->
+      <bpmndi:BPMNEdge id="Flow_04_OK_di" bpmnElement="Flow_04_OK">
+        <di:waypoint x="590" y="120" />
+        <di:waypoint x="640" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="608" y="102" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 04 Error -->
+      <bpmndi:BPMNEdge id="Flow_04_Error_di" bpmnElement="Flow_04_Error">
+        <di:waypoint x="565" y="145" />
+        <di:waypoint x="565" y="250" />
+        <di:waypoint x="640" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="572" y="195" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 05 -->
+      <bpmndi:BPMNEdge id="Flow_05_di" bpmnElement="Flow_05">
+        <di:waypoint x="740" y="120" />
+        <di:waypoint x="790" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 06 OK -->
+      <bpmndi:BPMNEdge id="Flow_06_OK_di" bpmnElement="Flow_06_OK">
+        <di:waypoint x="840" y="120" />
+        <di:waypoint x="890" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="858" y="102" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 06 Error -->
+      <bpmndi:BPMNEdge id="Flow_06_Error_di" bpmnElement="Flow_06_Error">
+        <di:waypoint x="815" y="145" />
+        <di:waypoint x="815" y="250" />
+        <di:waypoint x="740" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="822" y="195" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 07 -->
+      <bpmndi:BPMNEdge id="Flow_07_di" bpmnElement="Flow_07">
+        <di:waypoint x="990" y="120" />
+        <di:waypoint x="1040" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 08 -->
+      <bpmndi:BPMNEdge id="Flow_08_di" bpmnElement="Flow_08">
+        <di:waypoint x="1140" y="120" />
+        <di:waypoint x="1190" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 09 -->
+      <bpmndi:BPMNEdge id="Flow_09_di" bpmnElement="Flow_09">
+        <di:waypoint x="1290" y="120" />
+        <di:waypoint x="1340" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 10 -->
+      <bpmndi:BPMNEdge id="Flow_10_di" bpmnElement="Flow_10">
+        <di:waypoint x="1440" y="120" />
+        <di:waypoint x="1490" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 11 -->
+      <bpmndi:BPMNEdge id="Flow_11_di" bpmnElement="Flow_11">
+        <di:waypoint x="1590" y="120" />
+        <di:waypoint x="1640" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 12 -->
+      <bpmndi:BPMNEdge id="Flow_12_di" bpmnElement="Flow_12">
+        <di:waypoint x="1740" y="120" />
+        <di:waypoint x="1790" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 13 OK -->
+      <bpmndi:BPMNEdge id="Flow_13_OK_di" bpmnElement="Flow_13_OK">
+        <di:waypoint x="1840" y="120" />
+        <di:waypoint x="1890" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1858" y="102" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 13 Cancel -->
+      <bpmndi:BPMNEdge id="Flow_13_Cancel_di" bpmnElement="Flow_13_Cancel">
+        <di:waypoint x="1815" y="145" />
+        <di:waypoint x="1815" y="212" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1822" y="176" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 14 -->
+      <bpmndi:BPMNEdge id="Flow_14_di" bpmnElement="Flow_14">
+        <di:waypoint x="1990" y="120" />
+        <di:waypoint x="2042" y="120" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow 15 -->
+      <bpmndi:BPMNEdge id="Flow_15_di" bpmnElement="Flow_15">
+        <di:waypoint x="740" y="250" />
+        <di:waypoint x="792" y="250" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Webhook Flows -->
+      
+      <!-- Flow W01 -->
+      <bpmndi:BPMNEdge id="Flow_W01_di" bpmnElement="Flow_W01">
+        <di:waypoint x="316" y="500" />
+        <di:waypoint x="370" y="500" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W02 -->
+      <bpmndi:BPMNEdge id="Flow_W02_di" bpmnElement="Flow_W02">
+        <di:waypoint x="470" y="500" />
+        <di:waypoint x="520" y="500" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W03 -->
+      <bpmndi:BPMNEdge id="Flow_W03_di" bpmnElement="Flow_W03">
+        <di:waypoint x="620" y="500" />
+        <di:waypoint x="670" y="500" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W04 OK -->
+      <bpmndi:BPMNEdge id="Flow_W04_OK_di" bpmnElement="Flow_W04_OK">
+        <di:waypoint x="720" y="500" />
+        <di:waypoint x="770" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="738" y="482" width="14" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W04 Error -->
+      <bpmndi:BPMNEdge id="Flow_W04_Error_di" bpmnElement="Flow_W04_Error">
+        <di:waypoint x="695" y="525" />
+        <di:waypoint x="695" y="590" />
+        <di:waypoint x="1190" y="590" />
+        <di:waypoint x="1190" y="518" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="702" y="572" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W05 -->
+      <bpmndi:BPMNEdge id="Flow_W05_di" bpmnElement="Flow_W05">
+        <di:waypoint x="870" y="500" />
+        <di:waypoint x="920" y="500" />
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W06 No -->
+      <bpmndi:BPMNEdge id="Flow_W06_No_di" bpmnElement="Flow_W06_No">
+        <di:waypoint x="970" y="500" />
+        <di:waypoint x="1020" y="500" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="988" y="482" width="15" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W06 Si -->
+      <bpmndi:BPMNEdge id="Flow_W06_Si_di" bpmnElement="Flow_W06_Si">
+        <di:waypoint x="945" y="525" />
+        <di:waypoint x="945" y="560" />
+        <di:waypoint x="1190" y="560" />
+        <di:waypoint x="1190" y="518" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="952" y="542" width="46" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      
+      <!-- Flow W07 -->
+      <bpmndi:BPMNEdge id="Flow_W07_di" bpmnElement="Flow_W07">
+        <di:waypoint x="1120" y="500" />
+        <di:waypoint x="1172" y="500" />
+      </bpmndi:BPMNEdge>
+      
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
