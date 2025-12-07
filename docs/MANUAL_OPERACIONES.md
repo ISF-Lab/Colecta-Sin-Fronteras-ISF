@@ -68,10 +68,44 @@ R: Sí. Nosotros no guardamos datos de tarjeta. Todo se procesa directamente en 
 
 ---
 
-## 5. Contacto de Emergencia
+## 5. Importar Voluntarios (Antes de cada Colecta)
+
+Los voluntarios se registran mediante Google Forms. Para sincronizar sus equipos con la plataforma:
+
+### Paso 1: Descargar datos de Google Sheets
+1. Abre el Google Sheets conectado al formulario de voluntarios.
+2. Ve a **Archivo → Descargar → CSV (.csv)**.
+
+### Paso 2: Importar CSV a Supabase
+1. Entra a **Supabase → Table Editor**.
+2. Si no existe, crea la tabla `voluntarios_raw`:
+   - Haz clic en **"New Table"** → Nombre: `voluntarios_raw`
+   - O simplemente importa el CSV y Supabase creará la tabla automáticamente.
+3. Haz clic en **"Import data from CSV"**.
+4. Selecciona el archivo CSV descargado.
+
+### Paso 3: Migrar equipos a la tabla oficial
+1. Ve a **Supabase → SQL Editor**.
+2. Abre el script `/database/05-voluntarios.sql` del repositorio.
+3. **Lee las instrucciones** al inicio del archivo (especialmente si el Google Form cambió).
+4. Copia y pega el contenido → **Run**.
+5. El script extraerá los nombres de equipos únicos y los agregará a la tabla `teams`.
+
+> **⚠️ Si el formulario cambió:** El script asume que la columna del equipo se llama `"Equipo al que perteneces"`. Si el Form tiene preguntas diferentes, deberás modificar el script según las instrucciones incluidas.
+
+### Verificación
+Después de ejecutar, verifica los equipos creados:
+```sql
+SELECT * FROM public.teams ORDER BY name;
+```
+
+---
+
+## 6. Contacto de Emergencia
 
 Si la página se cae (error 500, pantalla blanca) o el ranking no se mueve en horas:
 
 1. **No entres en pánico.** Las donaciones suelen seguir funcionando en Payku aunque la página visual falle.
 2. Contacta al voluntario técnico de turno.
 3. Si es crítico, revisa el **Manual Técnico** sección "Troubleshooting".
+

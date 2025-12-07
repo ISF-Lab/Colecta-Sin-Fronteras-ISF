@@ -12,7 +12,7 @@
 CREATE TABLE teams (
   id BIGSERIAL PRIMARY KEY,
   slug TEXT UNIQUE NOT NULL,
-  name TEXT NOT NULL,
+  name TEXT UNIQUE NOT NULL,  -- UNIQUE agregado para soportar migración de voluntarios
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
